@@ -1,0 +1,84 @@
+.battleground {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 94vh;
+  background-image: url("./assets/Screenshot\ 2024-04-19\ at\ 7.21.34\ PM.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.player {
+  color: white;
+  text-align: center;
+  width: 30%;
+  padding: 20px;
+  background-color: black;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.pokemon img {
+  width: 20rem;
+  height: 20rem;
+  /* border-radius: 50%;  */
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
+  margin-bottom: 1rem;
+}
+
+.health-bar {
+  width: 10rem;
+  height: 1rem;
+  background-color: #ccc;
+  margin-top: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.health {
+  height: 100%;
+  background-color: #f00;
+  border-radius: 5px;
+  transition: width 0.5s ease;
+}
+
+.moves {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  flex-wrap: wrap; 
+}
+
+.moves button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-bottom: 10px; 
+}
+
+.moves button:hover {
+  background-color: #0056b3; 
+  transform: scale(1.05); 
+}
+
+@media (max-width: 768px) {
+  .battleground {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+
+  .player {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}

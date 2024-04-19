@@ -71,7 +71,6 @@ function run() {
   requestAnimationFrame(run);
 }
 function init() {
-  // createBushes();
   createBalls();
   run();
 }

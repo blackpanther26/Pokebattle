@@ -171,8 +171,6 @@ function displayPokemonDetails(pokemon) {
       max: 100,
     });
   });
-
-  setTypeBackgroundColor(pokemon);
 }
 
 function getEnglishFlavorText(pokemonSpecies) {
@@ -187,7 +185,7 @@ function getEnglishFlavorText(pokemonSpecies) {
 document
   .querySelector(".start-battle-btn")
   .addEventListener("click", function () {
-    // Code to start the battle
+    window.location.href = `battle.html?id=${currentPokemonId}`;
     console.log("Starting battle...");
   });
 
@@ -195,5 +193,4 @@ document
   .querySelector(".search-pokemon-btn")
   .addEventListener("click", function () {
     window.location.href = "index.html";
-    console.log("Searching for another Pokémon...");
-  });
+});

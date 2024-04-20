@@ -3,7 +3,7 @@
   justify-content: space-around;
   align-items: center;
   height: 94vh;
-  background-image: url("./assets/Screenshot\ 2024-04-19\ at\ 7.21.34\ PM.png");
+  background-image: url("./assets/pokeballbg.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -13,6 +13,7 @@
 }
 
 .player {
+  font-family:sans-serif;
   color: white;
   text-align: center;
   width: 30%;
@@ -48,27 +49,31 @@
 
 .moves {
   display: flex;
-  justify-content: space-around;
-  margin-top: 20px;
   flex-wrap: wrap; 
-}
-
-.moves button {
+  background-color: #f00;
+  justify-content: space-around;
+  margin-top: 1rem;
+  border-radius: 5px;
+ }
+ 
+ .moves button {
   padding: 10px 20px;
   font-size: 16px;
+  background-color: white;
   border: none;
   border-radius: 5px;
-
-  color: white;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  margin-bottom: 10px; 
-}
-
-.moves button:hover {
-  background-color: #0056b3; 
-  transform: scale(1.05); 
-}
+  margin-bottom: 10px;
+  align-self: flex-start;
+  display: inline-block; 
+ }
+ 
+ .moves button:hover {
+  background-color: black;
+  transform: scale(1.05);
+  color: white;
+ }
 
 @media (max-width: 768px) {
   .battleground {

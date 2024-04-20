@@ -34,7 +34,13 @@ async function fetchPokemonData(id) {
     return null;
   }
 }
-
+async function fetchMovesData(pokemonId) {
+  const url = `https://pokeapi.co/api/v2/move/${pokemonId}/`;
+  const response = await fetch(url);
+  const data = await response.json();
+  console.log(data);
+  return data.moves; 
+ }
 async function fetchRandomPokemon(id) {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
@@ -46,39 +52,64 @@ async function fetchRandomPokemon(id) {
   }
 }
 
-function displayPokemonofplayer(pokemon, playerNumber) {
-  const { name, id, abilities, stats } = pokemon;
+async function displayPokemonofplayer(pokemon, playerNumber) {
+  const { name, id, stats } = pokemon;
   const capitalizePokemonName = capitalizeFirstLetter(name);
-
-  document.querySelector("title").textContent = capitalizePokemonName;
-
+ 
+  const playerNameElement = document.querySelector(
+     `.player:nth-child(${playerNumber}) h2`
+  );
+  playerNameElement.textContent = capitalizePokemonName;
+ 
   const imageElement = document.querySelector(
-    `.player:nth-child(${playerNumber}) .pokemon img`
+     `.player:nth-child(${playerNumber}) .pokemon img`
   );
   imageElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${id}.svg`;
   imageElement.alt = name;
-}
+ 
+  const movesWrapper = document.querySelector(
+     `.player:nth-child(${playerNumber}) .moves`
+  );
 
+  const movesData = await fetchMovesData(id);
+
+  const firstFourMoves = movesData.slice(0, 4);
+  firstFourMoves.forEach(move => {
+     createAndAppendElement(movesWrapper, "button", {
+       className: "moves",
+       textContent: move.name,
+     });
+  });
+ }
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-document.getElementById("attack-btn").addEventListener("click", function () {
-  const player1Health = 100;
-  const player2Health = 100;
+function createAndAppendElement(parent, tag, options = {}) {
+  const element = document.createElement(tag);
+  Object.keys(options).forEach((key) => {
+    element[key] = options[key];
+  });
+  parent.appendChild(element);
+  return element;
+}
 
-  const damage = 10;
-  player1Health -= damage;
-  player2Health -= damage;
+// document.getElementById("attack-btn").addEventListener("click", function () {
+//   const player1Health = 100;
+//   const player2Health = 100;
 
-  document.getElementById("player1-health").style.width = `${player1Health}%`;
-  document.getElementById("player2-health").style.width = `${player2Health}%`;
+//   const damage = 10;
+//   player1Health -= damage;
+//   player2Health -= damage;
 
-  if (player1Health <= 0) {
-    alert("Player 2 wins!");
-  } else if (player2Health <= 0) {
-    alert("Player 1 wins!");
-  }
-});
+//   document.getElementById("player1-health").style.width = `${player1Health}%`;
+//   document.getElementById("player2-health").style.width = `${player2Health}%`;
+
+//   if (player1Health <= 0) {
+//     alert("Player 2 wins!");
+//   } else if (player2Health <= 0) {
+//     alert("Player 1 wins!");
+//   }
+// });

@@ -26,22 +26,12 @@ body{
         background-position: -160px 0;
     }
 }
-
-/* .bush{
-    width: 50px;
-    height: 40px;
-    background-image: url("assets/bush.png");
-    background-size: 100% 100%;
-    position: fixed;
-    z-index: -1;
-} */
-
 .pokeball{
-    width: 30px;
-    height: 30px;
-    background-image: url("assets/pokeball.png");
-    background-size: 100% 100%;
-    position: fixed;
+  width: 30px;
+  height: 30px;
+  background-image: url("assets/pokeball.png");
+  background-size: 100% 100%;
+  position: fixed;
 }
  /*------------------------------------------*/
  :root {

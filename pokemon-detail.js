@@ -1,7 +1,7 @@
 let currentPokemonId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-  const MAX_POKEMONS = 151;
+  const MAX_POKEMONS = 200;
   const pokemonID = new URLSearchParams(window.location.search).get("id");
   const id = parseInt(pokemonID, 10);
 
@@ -23,7 +23,7 @@ async function loadPokemon(id) {
         res.json()
       ),
     ]);
-
+    
     const abilitiesWrapper = document.querySelector(
       ".pokemon-detail-wrap .pokemon-detail.move"
     );
@@ -186,7 +186,6 @@ document
   .querySelector(".start-battle-btn")
   .addEventListener("click", function () {
     window.location.href = `battle.html?id=${currentPokemonId}`;
-    console.log("Starting battle...");
   });
 
 document

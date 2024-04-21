@@ -10,10 +10,10 @@
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-}
-
-.player {
-  font-family:sans-serif;
+ }
+ 
+ .player {
+  font-family: sans-serif;
   color: white;
   text-align: center;
   width: 30%;
@@ -21,36 +21,33 @@
   background-color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-}
-
-.pokemon img {
+ }
+ 
+ .pokemon img {
   width: 20rem;
   height: 20rem;
-  /* border-radius: 50%;  */
-  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  */
   margin-bottom: 1rem;
-}
-
-.health-bar {
-  width: 10rem;
+ }
+ 
+ .health-bar {
+  width: 100%; /* Adjusted to span the full width of the Pokémon container */
   height: 1rem;
   background-color: #ccc;
   margin-top: 10px;
   border-radius: 5px;
   overflow: hidden;
-}
-
-.health {
+ }
+ 
+ .health {
   height: 100%;
   background-color: #f00;
   border-radius: 5px;
   transition: width 0.5s ease;
-}
-
-.moves {
+ }
+ 
+ .moves {
   display: flex;
   flex-wrap: wrap; 
-  background-color: #f00;
   justify-content: space-around;
   margin-top: 1rem;
   border-radius: 5px;
@@ -74,16 +71,17 @@
   transform: scale(1.05);
   color: white;
  }
-
-@media (max-width: 768px) {
+ 
+ @media (max-width: 768px) {
   .battleground {
-    flex-direction: column;
-    height: auto;
-    padding: 10px;
+     flex-direction: column;
+     height: auto;
+     padding: 10px;
   }
-
+ 
   .player {
-    width: 100%;
-    margin-bottom: 20px;
+     width: 100%;
+     margin-bottom: 20px;
   }
-}
+ }
+ 

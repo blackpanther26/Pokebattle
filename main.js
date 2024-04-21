@@ -1,4 +1,4 @@
-const total_pokemons = 151;
+const total_pokemons = 200;
 const NUM_BALLS = 5;
 const player = document.querySelector(".player");
 const player_pos = {

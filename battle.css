@@ -1,19 +1,21 @@
-.battleground {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 94vh;
+body {
   background-image: url("./assets/pokeballbg.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 20px;
+  font-family: sans-serif;
+}
+.battleground {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 84vh;
+  padding: 1rem;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
- }
- 
- .player {
-  font-family: sans-serif;
+}
+
+.player {
   color: white;
   text-align: center;
   width: 30%;
@@ -21,39 +23,39 @@
   background-color: black;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
- }
- 
- .pokemon img {
+}
+
+.pokemon img {
   width: 20rem;
   height: 20rem;
   margin-bottom: 1rem;
- }
- 
- .health-bar {
-  width: 100%; /* Adjusted to span the full width of the Pokémon container */
+}
+
+.health-bar {
+  width: 100%;
   height: 1rem;
   background-color: #ccc;
   margin-top: 10px;
   border-radius: 5px;
   overflow: hidden;
- }
- 
- .health {
+}
+
+.health {
   height: 100%;
   background-color: #f00;
   border-radius: 5px;
   transition: width 0.5s ease;
- }
- 
- .moves {
+}
+
+.moves {
   display: flex;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   justify-content: space-around;
   margin-top: 1rem;
   border-radius: 5px;
- }
- 
- .moves button {
+}
+
+.moves button {
   padding: 10px 20px;
   font-size: 16px;
   background-color: white;
@@ -63,25 +65,45 @@
   transition: background-color 0.3s ease, transform 0.3s ease;
   margin-bottom: 10px;
   align-self: flex-start;
-  display: inline-block; 
- }
- 
- .moves button:hover {
+  display: inline-block;
+}
+
+.moves button:hover {
   background-color: black;
   transform: scale(1.05);
   color: white;
- }
- 
- @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
   .battleground {
-     flex-direction: column;
-     height: auto;
-     padding: 10px;
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
   }
- 
+
   .player {
-     width: 100%;
-     margin-bottom: 20px;
+    width: 100%;
+    margin-bottom: 20px;
   }
- }
- 
+}
+
+.comment-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.comment-box .comment {
+  max-width: 90%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.comment-box .comment p {
+  margin: 0;
+}

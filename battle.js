@@ -1,5 +1,6 @@
 const total_pokemons = 200;
 let pk1, pk2;
+let owner = "Player 1 ";
 document.addEventListener("DOMContentLoaded", () => {
   const pokemonID = new URLSearchParams(window.location.search).get("id");
   const id = parseInt(pokemonID, 10);
@@ -8,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(`Battling with Pokémon ID: ${id}`);
     fetchPokemonData(id).then(({ pokemon }) => {
       pk1 = new Pokemon(pokemon);
+      pk1.fetchMoves();
       displayPokemonofplayer(pokemon, 1);
       displaymoves(pokemon, "poke1");
     });
@@ -18,6 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const randomId = randomInteger(1, total_pokemons);
   fetchRandomPokemon(randomId).then(({ pokemon }) => {
     pk2 = new Pokemon(pokemon);
+    pk1.fetchMoves();
     displayPokemonofplayer(pokemon, 2);
     displaymoves(pokemon, "poke2");
   });
@@ -40,35 +43,114 @@ function getDefendingPokemon() {
 
 function switchPlayer() {
   currentPlayer = currentPlayer === 1 ? 2 : 1;
-  console.log(`Current player is now: ${currentPlayer}`);
+  //console.log(`Current player is now: ${currentPlayer}`);
 }
 
-function displaymoves(pokemon, pkn) {
+async function displaymoves(pokemon, pkn) {
   const moveButtons = document.getElementById(pkn).querySelectorAll("button");
   const shuffledMoves = pokemon.moves.sort(() => 0.5 - Math.random());
   const randomMoves = shuffledMoves.slice(0, 4);
-  randomMoves.forEach((move, index) => {
-    moveButtons[index].textContent = move.move.name;
 
-    moveButtons[index].addEventListener(
-      "click",
-      (function (moveData, attackingPokemonData) {
-        return function () {
-          const defendingPokemonData = getDefendingPokemon();
-          console.log(defendingPokemonData);
-          attack(moveData, attackingPokemonData, defendingPokemonData);
-        };
-      })(move, pokemon)
-    );
+  const moveDetails = await Promise.all(
+    randomMoves.map(async (move) => {
+      const response = await fetch(move.move.url);
+      const moveData = await response.json();
+      return moveData;
+    })
+  );
+
+  moveDetails.forEach((moveData, index) => {
+    moveButtons[index].textContent = moveData.name;
+    moveButtons[index].addEventListener("click", () => {
+      const defendingPokemonData = getDefendingPokemon();
+      const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
+      const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
+      // console.log("moveData");
+      // console.log(moveData);
+      // console.log(defendingPokemonData);
+      attack(moveData, attackingPokemonData, defendingPokemonData, owner);
+    });
   });
 }
 
-function attack(move, attackingPokemon, defendingPokemon) {
-  console.log(
-    `Attacking with move: ${move.move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
+function attack(move, attackingPokemon, defendingPokemon, owner) {
+  // console.log(
+  //   `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
+  // );
+  //console.log(move);
+  document.getElementById("comment").innerHTML =
+    "<p>" + owner + attackingPokemon.name + " used " + move.name + "!</p>";
+  let move_damage;
+  if (Math.floor(Math.random() * 100) + 1 < move.accuracy) {
+    move_damage = calculateDamage(move, attackingPokemon, defendingPokemon);
+    //console.log(move_damage);
+    move_damage = Math.min(defendingPokemon.hp, move_damage);
+    let i = netEffectiveness(
+      capitalizeFirstLetter(move.type.name),
+      defendingPokemon.type
+    );
+    switch (i) {
+      case 0:
+        document.getElementById("comment").innerHTML =
+          "<p>It had no effect!</p>";
+        break;
+      case 0.5:
+        document.getElementById("comment").innerHTML =
+          "<p>It was not very effective!</p>";
+        break;
+      case 2:
+        document.getElementById("comment").innerHTML =
+          "<p>It was very effective!</p>";
+        break;
+      case 4:
+        document.getElementById("comment").innerHTML =
+          "<p>It was super effective!</p>";
+        break;
+      default:
+        document.getElementById("comment").innerHTML = "<p>Attack Missed!</p>";
+        break;
+    }
+  }
+
+  defendingPokemon.hp -= Math.floor(move_damage);
+  //console.log(defendingPokemon.hp);
+  document.getElementById("comment").innerHTML = `<p> ${
+    defendingPokemon.data.name
+  } + ' lost '+ ${Math.floor(move_damage)} + ' HP'</p>`;
+
+  updateHealthBar(defendingPokemon.hp);
+  checkWinner(
+    defendingPokemon.hp,
+    defendingPokemon.name,
+    attackingPokemon.hp,
+    attackingPokemon.name
   );
 }
-
+function checkWinner(defendingPokemonHP, dfnm, attackingPokemonHP, atnm) {
+  if (defendingPokemonHP <= 0) {
+    document.getElementById(
+      "comment"
+    ).innerHTML = `<p> GAME OVER ! ${dfnm} WON </p>`;
+  } else if (attackingPokemonHP <= 0) {
+    document.getElementById(
+      "comment"
+    ).innerHTML = `<p> GAME OVER ! ${atnm} WON </p>`;
+  } else {
+    console.log("checkWinner");
+    console.log(defendingPokemonHP);
+  }
+}
+function updateHealthBar(hp) {
+  let f = pk1.hp <= 0 ? pk1 : pk2.hp <= 0 ? pk2 : false;
+  if (f) {
+    alert("GAME OVER:" + f.name + "fainted!");
+    document.getElementsByClassName(health).innerHTML =
+      "<p>HP: 0/" + f.fullhp + "</p>";
+    setTimeout(() => {
+      location.reload;
+    }, 1500);
+  }
+}
 async function fetchPokemonData(id) {
   try {
     const [pokemon, pokemonSpecies] = await Promise.all([
@@ -96,15 +178,10 @@ async function fetchRandomPokemon(id) {
     return null;
   }
 }
-async function fetchMoveDetails(moveName) {
-  let url = `https://pokeapi.co/api/v2/move/${moveName}`;
-  try {
-    const moveData = await fetch(url).then((res) => res.json());
-    console.log(moveData);
-    return moveData;
-  } catch {
-    console.error("An error occurred while fetching pokemon move details");
-  }
+async function fetchData(url) {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
 }
 class Pokemon {
   constructor(data) {
@@ -116,7 +193,19 @@ class Pokemon {
     this.level = Math.floor(Math.random() * (100 - 95 + 1)) + 95;
     this.calculateStats();
   }
-
+  async fetchMoves() {
+    const moveUrls = this.data.moves.map((move) => move.move.url);
+    const moves = await Promise.all(
+      moveUrls.slice(0, 4).map(async (url) => {
+        const moveData = await fetchData(url);
+        return moveData;
+      })
+    );
+    this.moves = moves;
+    this.moves.forEach((move) => {
+      this.moves_pp[move.name] = move.pp;
+    });
+  }
   calculateStats() {
     const { stats, types } = this.data;
     let hp = this.data.stats[0];
@@ -143,7 +232,7 @@ class Pokemon {
 }
 
 function displayPokemonofplayer(pokemon, playerNumber) {
-  const { name, id, moves, stats } = pokemon;
+  const { name, id } = pokemon;
   const capitalizePokemonName = capitalizeFirstLetter(name);
 
   const playerNameElement = document.querySelector(
@@ -157,37 +246,18 @@ function displayPokemonofplayer(pokemon, playerNumber) {
   imageElement.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/${id}.svg`;
   imageElement.alt = name;
 }
-// async function attack(movep, attacker, defender, hpElementId, attackerName) {
-//   const move = await movep;
-//   console.log(move.move.name); // Assuming move.move.name is the correct path to the move name
-//  console.log(attackerName);
-
-//   const damage = calculateDamage(move, attacker, defender);
-//   defender.hp -= damage;
-//   updateHealthBar(defender, damage);
-
-//   if (defender.hp <= 0) {
-//     console.log(`${defender.name} has fainted!`);
-//   }
-// }
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
-function createAndAppendElement(parent, tag, options = {}) {
-  const element = document.createElement(tag);
-  Object.keys(options).forEach((key) => {
-    element[key] = options[key];
-  });
-  parent.appendChild(element);
-  return element;
-}
-
 function calculateDamage(move, attacker, defender) {
+  // console.log("caldmg");
+  // console.log(move);
+  // console.log(attacker);
+  // console.log(defender.type);
   let effectiveness = netEffectiveness(
-    console.log(move),
     capitalizeFirstLetter(move.type.name),
     defender.type
   );
@@ -345,13 +415,4 @@ function netEffectiveness(moveType, pokemonTypes) {
     }
   }
   return effectivenessProduct;
-}
-
-function updateHealthBar(pokemon, healthChange) {
-  const healthElement = document.getElementById(
-    `player${pokemon.playerNumber}-health`
-  );
-  const currentHealth = parseInt(healthElement.style.width, 10);
-  const newHealth = Math.max(currentHealth - healthChange, 0);
-  healthElement.style.width = `${newHealth}%`;
 }

@@ -111,14 +111,17 @@ function attack(move, attackingPokemon, defendingPokemon, owner) {
         break;
     }
   }
-
+  console.log(attackingPokemon.name);
+  console.log(defendingPokemon.name)
+  console.log(attackingPokemon.hp);
+  console.log(defendingPokemon.hp);
   defendingPokemon.hp -= Math.floor(move_damage);
-  //console.log(defendingPokemon.hp);
+  console.log(defendingPokemon.hp);
   document.getElementById("comment").innerHTML = `<p> ${
     defendingPokemon.data.name
-  } + ' lost '+ ${Math.floor(move_damage)} + ' HP'</p>`;
+  } lost  ${Math.floor(move_damage)}  HP</p>`;
 
-  updateHealthBar(defendingPokemon.hp);
+  updateHealthBar(attackingPokemon);
   checkWinner(
     defendingPokemon.hp,
     defendingPokemon.name,
@@ -136,7 +139,7 @@ function checkWinner(defendingPokemonHP, dfnm, attackingPokemonHP, atnm) {
       "comment"
     ).innerHTML = `<p> GAME OVER ! ${atnm} WON </p>`;
   } else {
-    console.log("checkWinner");
+    //console.log("checkWinner");
     console.log(defendingPokemonHP);
   }
 }
@@ -144,7 +147,8 @@ function updateHealthBar(hp) {
   let f = pk1.hp <= 0 ? pk1 : pk2.hp <= 0 ? pk2 : false;
   if (f) {
     alert("GAME OVER:" + f.name + "fainted!");
-    document.getElementsByClassName(health).innerHTML =
+    //document.getElementById(`player${currentPlayer}-health`).style.width = `${(hp / f.fullhp) * 100}%`;
+    document.getElementsByClassName('health').innerHTML =
       "<p>HP: 0/" + f.fullhp + "</p>";
     setTimeout(() => {
       location.reload;

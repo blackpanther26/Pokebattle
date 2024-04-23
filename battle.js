@@ -1,6 +1,8 @@
 const total_pokemons = 200;
 let pk1, pk2;
 let owner = "Player 1 ";
+let flg1=true;
+let flg2=false;
 document.addEventListener("DOMContentLoaded", () => {
   const pokemonID = new URLSearchParams(window.location.search).get("id");
   const id = parseInt(pokemonID, 10);
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
       pk1 = new Pokemon(pokemon);
       pk1.fetchMoves();
       displayPokemonofplayer(pokemon, 1);
-      displaymoves(pokemon, "poke1");
+      displaymoves(pokemon, "poke1",flg1,flg2);
     });
   } else {
     console.error("No Pokémon ID provided.");
@@ -22,219 +24,12 @@ document.addEventListener("DOMContentLoaded", () => {
     pk2 = new Pokemon(pokemon);
     pk1.fetchMoves();
     displayPokemonofplayer(pokemon, 2);
-    displaymoves(pokemon, "poke2");
+    displaymoves(pokemon, "poke2",flg1,flg2);
+    document.getElementById('loadingScreen').style.display = 'none';
   });
 });
 
 let currentPlayer = 1;
-
-function getDefendingPokemon() {
-  if (currentPlayer === 1) {
-    switchPlayer();
-    return pk2;
-  } else if (currentPlayer === 2) {
-    switchPlayer();
-    return pk1;
-  } else {
-    console.error("Invalid current player number.");
-    return null;
-  }
-}
-
-function switchPlayer() {
-  currentPlayer = currentPlayer === 1 ? 2 : 1;
-  //console.log(`Current player is now: ${currentPlayer}`);
-}
-
-async function displaymoves(pokemon, pkn) {
-  const moveButtons = document.getElementById(pkn).querySelectorAll("button");
-  const shuffledMoves = pokemon.moves.sort(() => 0.5 - Math.random());
-  const randomMoves = shuffledMoves.slice(0, 4);
-
-  const moveDetails = await Promise.all(
-    randomMoves.map(async (move) => {
-      const response = await fetch(move.move.url);
-      const moveData = await response.json();
-      return moveData;
-    })
-  );
-
-  moveDetails.forEach((moveData, index) => {
-    moveButtons[index].textContent = moveData.name;
-    moveButtons[index].addEventListener("click", () => {
-      const defendingPokemonData = getDefendingPokemon();
-      const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
-      const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
-      // console.log("moveData");
-      // console.log(moveData);
-      // console.log(defendingPokemonData);
-      attack(moveData, attackingPokemonData, defendingPokemonData, owner);
-    });
-  });
-}
-
-function attack(move, attackingPokemon, defendingPokemon, owner) {
-  // console.log(
-  //   `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
-  // );
-  //console.log(move);
-  document.getElementById("comment").innerHTML =
-    "<p>" + owner + attackingPokemon.name + " used " + move.name + "!</p>";
-  let move_damage;
-  if (Math.floor(Math.random() * 100) + 1 < move.accuracy) {
-    move_damage = calculateDamage(move, attackingPokemon, defendingPokemon);
-    //console.log(move_damage);
-    move_damage = Math.min(defendingPokemon.hp, move_damage);
-    let i = netEffectiveness(
-      capitalizeFirstLetter(move.type.name),
-      defendingPokemon.type
-    );
-    switch (i) {
-      case 0:
-        document.getElementById("comment").innerHTML =
-          "<p>It had no effect!</p>";
-        break;
-      case 0.5:
-        document.getElementById("comment").innerHTML =
-          "<p>It was not very effective!</p>";
-        break;
-      case 2:
-        document.getElementById("comment").innerHTML =
-          "<p>It was very effective!</p>";
-        break;
-      case 4:
-        document.getElementById("comment").innerHTML =
-          "<p>It was super effective!</p>";
-        break;
-      default:
-        document.getElementById("comment").innerHTML = "<p>Attack Missed!</p>";
-        break;
-    }
-  }
-  console.log(attackingPokemon.name);
-  console.log(defendingPokemon.name)
-  console.log(attackingPokemon.hp);
-  console.log(defendingPokemon.hp);
-  defendingPokemon.hp -= Math.floor(move_damage);
-  console.log(defendingPokemon.hp);
-  document.getElementById("comment").innerHTML = `<p> ${
-    defendingPokemon.data.name
-  } lost  ${Math.floor(move_damage)}  HP</p>`;
-
-  updateHealthBar(attackingPokemon);
-  checkWinner(
-    defendingPokemon.hp,
-    defendingPokemon.name,
-    attackingPokemon.hp,
-    attackingPokemon.name
-  );
-}
-function checkWinner(defendingPokemonHP, dfnm, attackingPokemonHP, atnm) {
-  if (defendingPokemonHP <= 0) {
-    document.getElementById(
-      "comment"
-    ).innerHTML = `<p> GAME OVER ! ${dfnm} WON </p>`;
-  } else if (attackingPokemonHP <= 0) {
-    document.getElementById(
-      "comment"
-    ).innerHTML = `<p> GAME OVER ! ${atnm} WON </p>`;
-  } else {
-    //console.log("checkWinner");
-    console.log(defendingPokemonHP);
-  }
-}
-function updateHealthBar(hp) {
-  let f = pk1.hp <= 0 ? pk1 : pk2.hp <= 0 ? pk2 : false;
-  if (f) {
-    alert("GAME OVER:" + f.name + "fainted!");
-    //document.getElementById(`player${currentPlayer}-health`).style.width = `${(hp / f.fullhp) * 100}%`;
-    document.getElementsByClassName('health').innerHTML =
-      "<p>HP: 0/" + f.fullhp + "</p>";
-    setTimeout(() => {
-      location.reload;
-    }, 1500);
-  }
-}
-async function fetchPokemonData(id) {
-  try {
-    const [pokemon, pokemonSpecies] = await Promise.all([
-      fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) =>
-        res.json()
-      ),
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then((res) =>
-        res.json()
-      ),
-    ]);
-    return { pokemon, pokemonSpecies };
-  } catch (error) {
-    console.error("An error occurred while fetching Pokémon data:", error);
-    return null;
-  }
-}
-
-async function fetchRandomPokemon(id) {
-  try {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-    const data = await response.json();
-    return { pokemon: data };
-  } catch (error) {
-    console.error("An error occurred while fetching a random Pokémon:", error);
-    return null;
-  }
-}
-async function fetchData(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  return data;
-}
-class Pokemon {
-  constructor(data) {
-    this.data = data;
-    this.id = data.id;
-    this.name = data.name;
-    this.moves = null;
-    this.moves_pp = {};
-    this.level = Math.floor(Math.random() * (100 - 95 + 1)) + 95;
-    this.calculateStats();
-  }
-  async fetchMoves() {
-    const moveUrls = this.data.moves.map((move) => move.move.url);
-    const moves = await Promise.all(
-      moveUrls.slice(0, 4).map(async (url) => {
-        const moveData = await fetchData(url);
-        return moveData;
-      })
-    );
-    this.moves = moves;
-    this.moves.forEach((move) => {
-      this.moves_pp[move.name] = move.pp;
-    });
-  }
-  calculateStats() {
-    const { stats, types } = this.data;
-    let hp = this.data.stats[0];
-    this.attack = this.calculateStat(stats[1]);
-    this.defense = this.calculateStat(stats[2]);
-    this.total_hp = Math.floor(
-      0.01 * (2 * hp.base_stat + Math.floor(0.25 * hp.effort)) + this.level + 10
-    );
-    this.special_attack = this.calculateStat(stats[3]);
-    this.special_defense = this.calculateStat(stats[4]);
-    this.speed = this.calculateStat(stats[5]);
-    this.type = types.map((type) => capitalizeFirstLetter(type.type.name));
-    this.hp = this.total_hp;
-  }
-
-  calculateStat(stat) {
-    return Math.floor(
-      0.01 *
-        (2 * stat.base_stat + Math.floor(0.25 * stat.effort)) *
-        this.level +
-        5
-    );
-  }
-}
-
 function displayPokemonofplayer(pokemon, playerNumber) {
   const { name, id } = pokemon;
   const capitalizePokemonName = capitalizeFirstLetter(name);
@@ -256,11 +51,61 @@ function capitalizeFirstLetter(string) {
 function randomInteger(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+function getDefendingPokemon() {
+  if (currentPlayer === 1) {
+    switchPlayer();
+    return pk2;
+  } else if (currentPlayer === 2) {
+    switchPlayer();
+    return pk1;
+  } else {
+    console.error("Invalid current player number.");
+    return null;
+  }
+}
+
+function switchPlayer() {
+  currentPlayer = currentPlayer === 1 ? 2 : 1;
+  //console.log(`Current player is now: ${currentPlayer}`);
+}
+
+async function displaymoves(pokemon, pkn,flag,othflag) {
+  const moveButtons = document.getElementById(pkn).querySelectorAll("button");
+  const shuffledMoves = pokemon.moves.sort(() => 0.5 - Math.random());
+  const randomMoves = shuffledMoves.slice(0, 4);
+
+  const moveDetails = await Promise.all(
+    randomMoves.map(async (move) => {
+      const response = await fetch(move.move.url);
+      const moveData = await response.json();
+      return moveData;
+    })
+  );
+
+  moveDetails.forEach((moveData, index) => {
+    moveButtons[index].textContent = moveData.name;
+    moveButtons[index].addEventListener("click", () => {
+      if (flag) {
+        const defendingPokemonData = getDefendingPokemon();
+        const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
+        const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
+        // console.log("moveData");
+        // console.log(moveData);
+        // console.log(defendingPokemonData);
+        attack(moveData, attackingPokemonData, defendingPokemonData, owner);
+        flag=false;
+        othflag=true;
+      }
+    });
+  });
+}
+
 function calculateDamage(move, attacker, defender) {
-  // console.log("caldmg");
-  // console.log(move);
-  // console.log(attacker);
-  // console.log(defender.type);
+  console.log("caldmg");
+  console.log(move);
+  console.log(attacker);
+  console.log(defender.type);
   let effectiveness = netEffectiveness(
     capitalizeFirstLetter(move.type.name),
     defender.type
@@ -419,4 +264,156 @@ function netEffectiveness(moveType, pokemonTypes) {
     }
   }
   return effectivenessProduct;
+}
+
+function attack(move, attackingPokemon, defendingPokemon, owner) {
+  console.log(
+    `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
+  );
+  console.log(move);
+  document.getElementById("comment").innerHTML =
+    "<p>" + owner + attackingPokemon.name + " used " + move.name + "!</p>";
+  let move_damage;
+  move_damage = calculateDamage(move, attackingPokemon, defendingPokemon);
+    move_damage = Math.min(defendingPokemon.hp, move_damage);
+  if (Math.floor(Math.random() * 100) + 1 < move.accuracy) {
+    
+    let i = netEffectiveness(
+      capitalizeFirstLetter(move.type.name),
+      defendingPokemon.type
+    );
+    switch (i) {
+      case 0:
+        document.getElementById("comment").innerHTML =
+          "<p>It had no effect!</p>";
+        break;
+      case 0.5:
+        document.getElementById("comment").innerHTML =
+          "<p>It was not very effective!</p>";
+        break;
+      case 2:
+        document.getElementById("comment").innerHTML =
+          "<p>It was very effective!</p>";
+        break;
+      case 4:
+        document.getElementById("comment").innerHTML =
+          "<p>It was super effective!</p>";
+        break;
+    }
+  }else{
+    document.getElementById("comment").innerHTML = "<p>Attack Missed!</p>";
+  }
+  console.log(attackingPokemon.name);
+  console.log(defendingPokemon.name);
+  console.log(attackingPokemon.hp);
+  console.log(defendingPokemon.hp);
+  defendingPokemon.hp -= Math.floor(move_damage);
+  console.log(move_damage);
+  console.log(defendingPokemon.hp);
+  document.getElementById("comment").innerHTML = `<p> ${
+    defendingPokemon.data.name
+  } lost  ${Math.floor(move_damage)}  HP</p>`;
+
+  updateHealthBar(
+    defendingPokemon,
+    attackingPokemon,
+    defendingPokemon.hp,
+    defendingPokemon.name,
+    attackingPokemon.hp,
+    attackingPokemon.name
+  );
+}
+
+function updateHealthBar(defendingPokemon,attackingPokemon,defendingHP, dfnm, attackingHP, atnm) {
+  document.getElementById(`player${currentPlayer}-health`).style.width = `${
+    ( defendingHP/ defendingPokemon.total_hp) * 100
+  }%`;
+
+  if (defendingHP <= 0) {
+    alert("GAME OVER: " + dfnm + " fainted!");
+    window.location.href = "index.html";
+  } else if (attackingHP <= 0) {
+    alert("GAME OVER: " + atnm + " fainted!");
+    window.location.href = "index.html";
+  }
+}
+
+async function fetchPokemonData(id) {
+  try {
+    const [pokemon, pokemonSpecies] = await Promise.all([
+      fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) =>
+        res.json()
+      ),
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`).then((res) =>
+        res.json()
+      ),
+    ]);
+    return { pokemon, pokemonSpecies };
+  } catch (error) {
+    console.error("An error occurred while fetching Pokémon data:", error);
+    return null;
+  }
+}
+
+async function fetchRandomPokemon(id) {
+  try {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+    const data = await response.json();
+    return { pokemon: data };
+  } catch (error) {
+    console.error("An error occurred while fetching a random Pokémon:", error);
+    return null;
+  }
+}
+async function fetchData(url) {
+  const response = await fetch(url);
+  const data = await response.json();
+  return data;
+}
+class Pokemon {
+  constructor(data) {
+    this.data = data;
+    this.id = data.id;
+    this.name = data.name;
+    this.moves = null;
+    this.moves_pp = {};
+    this.level = Math.floor(Math.random() * (100 - 95 + 1)) + 95;
+    this.calculateStats();
+  }
+  async fetchMoves() {
+    const moveUrls = this.data.moves.map((move) => move.move.url);
+    const moves = await Promise.all(
+      moveUrls.slice(0, 4).map(async (url) => {
+        const moveData = await fetchData(url);
+        return moveData;
+      })
+    );
+    this.moves = moves;
+    this.moves.forEach((move) => {
+      this.moves_pp[move.name] = move.pp;
+    });
+  }
+  calculateStats() {
+    const { stats, types } = this.data;
+    let hp = this.data.stats[0];
+    this.attack = this.calculateStat(stats[1]);
+    this.defense = this.calculateStat(stats[2]);
+    this.total_hp = Math.floor(
+      0.01 * (2 * hp.base_stat + Math.floor(0.25 * hp.effort)) + this.level + 10
+    );
+    this.special_attack = this.calculateStat(stats[3]);
+    this.special_defense = this.calculateStat(stats[4]);
+    this.speed = this.calculateStat(stats[5]);
+    this.type = types.map((type) => capitalizeFirstLetter(type.type.name));
+    this.hp = this.total_hp;
+  }
+
+  calculateStat(stat) {
+    return Math.floor(
+      0.01 *
+        (2 * stat.base_stat + Math.floor(0.25 * stat.effort)) *
+        this.level +
+        5
+    );
+  }
 }

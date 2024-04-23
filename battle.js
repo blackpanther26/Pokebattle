@@ -13,18 +13,18 @@ document.addEventListener("DOMContentLoaded", () => {
       pk1 = new Pokemon(pokemon);
       pk1.fetchMoves();
       displayPokemonofplayer(pokemon, 1);
-      displaymoves(pokemon, "poke1",flg1,flg2);
+      displaymoves(pokemon, "poke1",1,2);
     });
   } else {
     console.error("No Pokémon ID provided.");
   }
 
   const randomId = randomInteger(1, total_pokemons);
-  fetchRandomPokemon(randomId).then(({ pokemon }) => {
+  fetchRandomPokemon(randomId).then(({pokemon }) => {
     pk2 = new Pokemon(pokemon);
     pk1.fetchMoves();
     displayPokemonofplayer(pokemon, 2);
-    displaymoves(pokemon, "poke2",flg1,flg2);
+    displaymoves(pokemon, "poke2",2,1);
     document.getElementById('loadingScreen').style.display = 'none';
   });
 });
@@ -86,17 +86,33 @@ async function displaymoves(pokemon, pkn,flag,othflag) {
   moveDetails.forEach((moveData, index) => {
     moveButtons[index].textContent = moveData.name;
     moveButtons[index].addEventListener("click", () => {
-      if (flag) {
-        const defendingPokemonData = getDefendingPokemon();
-        const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
-        const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
-        // console.log("moveData");
-        // console.log(moveData);
-        // console.log(defendingPokemonData);
-        attack(moveData, attackingPokemonData, defendingPokemonData, owner);
-        flag=false;
-        othflag=true;
+      if (flag===1){
+        if (flg1) {
+          const defendingPokemonData = getDefendingPokemon();
+          const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
+          const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
+          // console.log("moveData");
+          // console.log(moveData);
+          // console.log(defendingPokemonData);
+          attack(moveData, attackingPokemonData, defendingPokemonData, owner);
+          flg1=false;
+          flg2=true;
+        }
       }
+      else {
+        if (flg2) {
+          const defendingPokemonData = getDefendingPokemon();
+          const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
+          const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
+          // console.log("moveData");
+          // console.log(moveData);
+          // console.log(defendingPokemonData);
+          attack(moveData, attackingPokemonData, defendingPokemonData, owner);
+          flg2=false;
+          flg1=true;
+      }
+    }
+      
     });
   });
 }

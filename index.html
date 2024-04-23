@@ -3,11 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokeBattle</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Pokémon Game Instructions</title>
+    <link rel="stylesheet" href="instructions.css">
+    <link rel="icon" href="./assets/pokeball.png" type="image/x-icon">
 </head>
 <body>
-    <div class="player"></div>
-    <script src="main.js"></script>
+    <div class="container">
+        <h1>Pokémon Game Instructions</h1>
+        <section>
+            <h2>Game Overview</h2>
+            <p>Welcome to the Pokémon Game! It's a two player game . Each Pokémon has unique abilities and moves that can be used in battle. Your goal is to defeat your opponent's Pokémon to win the game.</p>
+        </section>
+        <section>
+            <h2>Controls</h2>
+            <ul>
+                <li><strong>Select Pokémon:</strong> Use the arrow keys to navigate through your Pokémon.</li>
+                <li><strong>Choose Move:</strong> Once your Pokémon is selected, you can proceed to the battle.</li>
+                <li><strong>Attack:</strong> Press the buttons with the selected move.</li>
+                <li><strong>End:</strong> When the game ends , you are redirected to the home page.</li>
+            </ul>
+        </section>
+        <button class="next-button" onclick="location.href='search.html'">Next</button>
+    </div>
 </body>
 </html>

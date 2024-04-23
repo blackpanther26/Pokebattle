@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const id = parseInt(pokemonID, 10);
 
   if (id < 1 || id > MAX_POKEMONS) {
-    return (window.location.href = "./index.html");
+    return (window.location.href = "./search.html");
   }
 
   currentPokemonId = id;
@@ -191,5 +191,5 @@ document
 document
   .querySelector(".search-pokemon-btn")
   .addEventListener("click", function () {
-    window.location.href = "index.html";
+    window.location.href = "search.html";
   });

@@ -347,10 +347,10 @@ function updateHealthBar(defendingPokemon,attackingPokemon,defendingHP, dfnm, at
 
   if (defendingHP <= 0) {
     alert("GAME OVER: " + dfnm + " fainted!");
-    window.location.href = "index.html";
+    window.location.href = "search.html";
   } else if (attackingHP <= 0) {
     alert("GAME OVER: " + atnm + " fainted!");
-    window.location.href = "index.html";
+    window.location.href = "search.html";
   }
 }
 

@@ -283,10 +283,12 @@ function netEffectiveness(moveType, pokemonTypes) {
 }
 
 function attack(move, attackingPokemon, defendingPokemon, owner) {
-  console.log(
-    `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
-  );
-  console.log(move);
+  // console.log(
+  //   `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
+  // );
+  // console.log(move);
+  document.getElementById("whoseturn").innerHTML =
+    "<p>" + defendingPokemon.name +"'s turn to play! "+ "</p>";
   document.getElementById("comment").innerHTML =
     "<p>" + owner + attackingPokemon.name + " used " + move.name + "!</p>";
   let move_damage;
@@ -347,10 +349,10 @@ function updateHealthBar(defendingPokemon,attackingPokemon,defendingHP, dfnm, at
 
   if (defendingHP <= 0) {
     alert("GAME OVER: " + dfnm + " fainted!");
-    window.location.href = "search.html";
+    window.location.href = "index.html";
   } else if (attackingHP <= 0) {
     alert("GAME OVER: " + atnm + " fainted!");
-    window.location.href = "search.html";
+    window.location.href = "index.html";
   }
 }
 

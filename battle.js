@@ -348,11 +348,17 @@ function updateHealthBar(defendingPokemon,attackingPokemon,defendingHP, dfnm, at
   }%`;
 
   if (defendingHP <= 0) {
-    alert("GAME OVER: " + dfnm + " fainted!");
+    document.getElementById(`player${currentPlayer}-health`).style.width = 0;
+    setTimeout(() => {
+      alert("GAME OVER: " + dfnm + " fainted!");
     window.location.href = "index.html";
+    }, 1000);
   } else if (attackingHP <= 0) {
-    alert("GAME OVER: " + atnm + " fainted!");
+    document.getElementById(`player${currentPlayer}-health`).style.width = 0;
+    setTimeout(() => {
+      alert("GAME OVER: " + atnm + " fainted!");
     window.location.href = "index.html";
+    }, 1000);
   }
 }
 

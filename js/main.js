@@ -123,7 +123,7 @@ async function checkCollisions() {
       const pokemonID = pokemon.species.url.split("/")[6];
       console.log(pokemonID);
       if (pokemonID) {
-        window.location.href = `detail.html?id=${pokemonID}`;
+        window.location.href = `./detail.html?id=${pokemonID}`;
       }
     }
   });

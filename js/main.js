@@ -10,7 +10,7 @@ const player_vel = {
   y: 0,
 };
 const balls = [];
-const sound = new Audio("assets/coin.mp3");
+const sound = new Audio("../assets/coin.mp3");
 function generateBall() {
   const div = document.createElement("div");
   div.classList.add("pokeball");
@@ -80,22 +80,22 @@ init();
 window.addEventListener("keydown", function (e) {
   if (e.key == "ArrowUp") {
     player_vel.y = 3;
-    player.style.backgroundImage = 'url("assets/player_front.png")';
+    player.style.backgroundImage = 'url("../assets/player_front.png")';
     player.classList.add("active");
   }
   if (e.key == "ArrowDown") {
     player_vel.y = -3;
-    player.style.backgroundImage = 'url("assets/player_back.png")';
+    player.style.backgroundImage = 'url("../assets/player_back.png")';
     player.classList.add("active");
   }
   if (e.key == "ArrowLeft") {
     player_vel.x = -3;
-    player.style.backgroundImage = 'url("assets/player_left.png")';
+    player.style.backgroundImage = 'url("../assets/player_left.png")';
     player.classList.add("active");
   }
   if (e.key == "ArrowRight") {
     player_vel.x = 3;
-    player.style.backgroundImage = 'url("assets/player_right.png")';
+    player.style.backgroundImage = 'url("../assets/player_right.png")';
     player.classList.add("active");
   }
 });
@@ -123,7 +123,7 @@ async function checkCollisions() {
       const pokemonID = pokemon.species.url.split("/")[6];
       console.log(pokemonID);
       if (pokemonID) {
-        window.location.href = `./detail.html?id=${pokemonID}`;
+        window.location.href = `../detail.html?id=${pokemonID}`;
       }
     }
   });

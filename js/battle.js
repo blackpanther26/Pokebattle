@@ -67,7 +67,6 @@ function getDefendingPokemon() {
 
 function switchPlayer() {
   currentPlayer = currentPlayer === 1 ? 2 : 1;
-  //console.log(`Current player is now: ${currentPlayer}`);
 }
 
 async function displaymoves(pokemon, pkn,flag,othflag) {
@@ -91,9 +90,6 @@ async function displaymoves(pokemon, pkn,flag,othflag) {
           const defendingPokemonData = getDefendingPokemon();
           const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
           const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
-          // console.log("moveData");
-          // console.log(moveData);
-          // console.log(defendingPokemonData);
           attack(moveData, attackingPokemonData, defendingPokemonData, owner);
           flg1=false;
           flg2=true;
@@ -104,9 +100,6 @@ async function displaymoves(pokemon, pkn,flag,othflag) {
           const defendingPokemonData = getDefendingPokemon();
           const attackingPokemonData = currentPlayer === 2 ? pk1 : pk2;
           const owner = currentPlayer === 2 ? "Player 1 " : "Player 2 ";
-          // console.log("moveData");
-          // console.log(moveData);
-          // console.log(defendingPokemonData);
           attack(moveData, attackingPokemonData, defendingPokemonData, owner);
           flg2=false;
           flg1=true;
@@ -283,10 +276,6 @@ function netEffectiveness(moveType, pokemonTypes) {
 }
 
 function attack(move, attackingPokemon, defendingPokemon, owner) {
-  // console.log(
-  //   `Attacking with move: ${move.name} from Pokémon: ${attackingPokemon.name} against Pokémon: ${defendingPokemon.name}`
-  // );
-  // console.log(move);
   document.getElementById("whoseturn").innerHTML =
     "<p>" + defendingPokemon.name +"'s turn to play! "+ "</p>";
   document.getElementById("comment").innerHTML =

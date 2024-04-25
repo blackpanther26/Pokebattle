@@ -10,7 +10,7 @@ const player_vel = {
   y: 0,
 };
 const balls = [];
-const sound = new Audio("../assets/coin.mp3");
+const sound = new Audio("assets/coin.mp3");
 function generateBall() {
   const div = document.createElement("div");
   div.classList.add("pokeball");
